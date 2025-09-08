@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Slider } from '@/components/ui/slider';
 import { Separator } from '@/components/ui/separator';
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
 import Icon from '@/components/ui/icon';
@@ -34,7 +33,8 @@ const Index = () => {
     size: '',
     color: '',
     brand: '',
-    priceRange: [0, 10000],
+    minPrice: 0,
+    maxPrice: 15000,
     category: ''
   });
 
@@ -109,8 +109,8 @@ const Index = () => {
       (!filters.color || product.colors.includes(filters.color)) &&
       (!filters.brand || product.brand === filters.brand) &&
       (!filters.category || product.category === filters.category) &&
-      product.price >= filters.priceRange[0] &&
-      product.price <= filters.priceRange[1]
+      product.price >= filters.minPrice &&
+      product.price <= filters.maxPrice
     );
   });
 
@@ -220,7 +220,7 @@ const Index = () => {
               <h3 className="text-lg font-semibold mb-4 text-black">Фильтры</h3>
               
               {/* Size Filter */}
-              <div className="space-y-2">
+              <div className="space-y-2 mb-4">
                 <label className="text-sm font-medium text-black">Размер</label>
                 <Select value={filters.size} onValueChange={(value) => setFilters(prev => ({ ...prev, size: value }))}>
                   <SelectTrigger>
@@ -239,7 +239,7 @@ const Index = () => {
               </div>
 
               {/* Color Filter */}
-              <div className="space-y-2">
+              <div className="space-y-2 mb-4">
                 <label className="text-sm font-medium text-black">Цвет</label>
                 <Select value={filters.color} onValueChange={(value) => setFilters(prev => ({ ...prev, color: value }))}>
                   <SelectTrigger>
@@ -255,7 +255,7 @@ const Index = () => {
               </div>
 
               {/* Brand Filter */}
-              <div className="space-y-2">
+              <div className="space-y-2 mb-4">
                 <label className="text-sm font-medium text-black">Бренд</label>
                 <Select value={filters.brand} onValueChange={(value) => setFilters(prev => ({ ...prev, brand: value }))}>
                   <SelectTrigger>
@@ -271,7 +271,7 @@ const Index = () => {
               </div>
 
               {/* Category Filter */}
-              <div className="space-y-2">
+              <div className="space-y-2 mb-4">
                 <label className="text-sm font-medium text-black">Категория</label>
                 <Select value={filters.category} onValueChange={(value) => setFilters(prev => ({ ...prev, category: value }))}>
                   <SelectTrigger>
@@ -287,23 +287,33 @@ const Index = () => {
               </div>
 
               {/* Price Range Filter */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-black">
-                  Цена: {filters.priceRange[0].toLocaleString()} - {filters.priceRange[1].toLocaleString()} ₽
-                </label>
-                <Slider
-                  value={filters.priceRange}
-                  onValueChange={(value) => setFilters(prev => ({ ...prev, priceRange: value }))}
-                  max={15000}
-                  min={0}
-                  step={500}
-                  className="w-full"
-                />
+              <div className="space-y-2 mb-4">
+                <label className="text-sm font-medium text-black">Цена</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <Input
+                    type="number"
+                    placeholder="От"
+                    value={filters.minPrice}
+                    onChange={(e) => setFilters(prev => ({ 
+                      ...prev, 
+                      minPrice: Number(e.target.value) || 0
+                    }))}
+                  />
+                  <Input
+                    type="number"
+                    placeholder="До"
+                    value={filters.maxPrice}
+                    onChange={(e) => setFilters(prev => ({ 
+                      ...prev, 
+                      maxPrice: Number(e.target.value) || 15000 
+                    }))}
+                  />
+                </div>
               </div>
 
               <Button 
                 variant="outline" 
-                onClick={() => setFilters({ size: '', color: '', brand: '', priceRange: [0, 10000], category: '' })}
+                onClick={() => setFilters({ size: '', color: '', brand: '', minPrice: 0, maxPrice: 15000, category: '' })}
                 className="w-full"
               >
                 Сбросить фильтры
